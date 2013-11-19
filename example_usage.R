@@ -32,7 +32,7 @@ z <- coverage(bwv)
 print(object.size(z),unit="Mb")
 
 # get integer coverage over the GRanges specified by BigWigViews
-intCoverageMatrix <- function(bmv) {
+intCoverageMatrix <- function(bwv) {
   # get the SimpleList of RleLists
   cvrOverBigWigs <- coverage(bwv)
   bwr <- bigWigRanges(bwv)
@@ -49,7 +49,7 @@ intCoverageMatrix <- function(bmv) {
 }
 
 # this gives the matrix of coverage
-z <- intCoverageMatrix(bmv)
+z <- intCoverageMatrix(bwv)
 print(object.size(z),unit="Mb")
 
 # plot coverage across replicates
