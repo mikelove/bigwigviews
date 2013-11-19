@@ -13,23 +13,38 @@ source("AllGenerics.R")
 source("methods-BigWigViews.R")
 
 # just make a SimpleList of coverage
-gr <- GRanges(c("chr1","chr1","chr2"),IRanges(c(43e6,147e6,74e6)+1,width=1e6))
+gr <- GRanges(c("chr1","chr1","chr2"),IRanges(c(43e6,147e6,74e6)+1,width=2e5))
 bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
+
+# show
+bwv
+
+# the carry-over methods from BamViews
+names(bwv)
+dim(bwv)
+dimnames(bwv)
+bwv[1:2,2]
+
+# try the coverage method
+# this gives a SimpleList for each sample
+# with elements: RleList of coverage over each seq
 z <- coverage(bwv)
 print(object.size(z),unit="Mb")
 
-# if the bigWigRange is over a single chromosome, 
-# this should get integer coverage over these ranges
+# get integer coverage over the GRanges specified by BigWigViews
 intCoverageMatrix <- function(bmv) {
+  # get the SimpleList of RleLists
   cvrOverBigWigs <- coverage(bwv)
+  bwr <- bigWigRanges(bwv)
+  charRangesNames <- as.character(seqnames(bwr))
+  rangesList <- split(ranges(bwr),seqnames(bwr))
   cvrList <- lapply(cvrOverBigWigs, function(cvr) {
-    charRangesNames <- as.character(seqnames(bigWigRanges(bwv)))
-    cvrOverSeqs <- lapply(charRangesNames, function(seqname) {
-      bwr <- bigWigRanges(bwv)
-      viewApply(Views(cvr[[seqname]], ranges(bwr[seqnames(bwr) == seqname])), as.integer)
-    })
-    do.call(c, cvrOverSeqs)
+    listOfLists <- viewApply(RleViewsList(rleList=cvr[names(cvr) %in% charRangesNames],
+                                          rangesList=rangesList), as.integer, simplify=FALSE)
+    # turn the list of lists into a long vector
+    do.call(c, lapply(listOfLists, function(x) do.call(c, as.list(x))))
   })
+  # bind the vectors from each sample
   do.call(cbind, cvrList)
 }
 
@@ -39,4 +54,4 @@ print(object.size(z),unit="Mb")
 
 # plot coverage across replicates
 idx <- rowSums(z) > 0
-plot(z[idx,1],z[idx,2],cex=.1,log="xy",col=rgb(0,0,0,.2))
+plot(z[idx,1],z[idx,2],cex=.5)
