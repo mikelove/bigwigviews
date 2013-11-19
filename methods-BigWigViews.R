@@ -65,6 +65,7 @@ setMethod(names, "BigWigViews", function(x) {
                       elementMetadata=bigWigSamples(bigWigViews)))
   }
 
+# TODO check on this split() copied over from the BamViews code
 .BigWigViews_which <- function(file)
 {
   grange <- bigWigRanges(file)

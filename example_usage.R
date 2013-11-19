@@ -1,23 +1,21 @@
-# download some Encode RNA-Seq BigWigs 4-16 Mb
-ftpPath <- "http://ftp.ebi.ac.uk/pub/databases/ensembl/encode/integration_data_jan2011/byDataType/rna_signal/jan2011/hub/"
-ftpFiles <- c("wgEncodeCshlShortRnaSeqK562CellShortMinusRaw.bigWig",
-              "wgEncodeCshlShortRnaSeqK562CellShortPlusRaw.bigWig",
-              "wgEncodeCshlShortRnaSeqK562CellShorttotalTapMinusRawRep1.bigWig",
-              "wgEncodeCshlShortRnaSeqK562CellShorttotalTapMinusRawRep2.bigWig",
-              "wgEncodeCshlShortRnaSeqK562CellShorttotalTapPlusRawRep1.bigWig", 
-              "wgEncodeCshlShortRnaSeqK562CellShorttotalTapPlusRawRep2.bigWig")
+# download some Encode RNA-Seq BigWigs each 160 Mb
+ftpPath <- "ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeCshlLongRnaSeq/"
+ftpFiles <- c("wgEncodeCshlLongRnaSeqA549CellLongnonpolyaMinusRawSigRep1.bigWig",
+              "wgEncodeCshlLongRnaSeqA549CellLongnonpolyaMinusRawSigRep2.bigWig")
+
 for (f in ftpFiles[!file.exists(ftpFiles)]) {
   download.file(paste0(ftpPath,f),destfile=f)
 }
 fls <- ftpFiles
 
+# just make a SimpleList of coverage
 library(rtracklayer)
 gr <- GRanges("chr1",IRanges(15e6+1,width=5e5))
 bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
 z <- coverage(bwv)
 
 # if the bigWigRange is over a single chromosome, 
-# this will get integer coverage over these ranges
+# this should get integer coverage over these ranges
 intCovMatrix <- function(bmv) {
   cvrOverBigWigs <- coverage(bwv)
   cvrList <- lapply(cvrOverBigWigs, function(cvr) {
@@ -27,4 +25,5 @@ intCovMatrix <- function(bmv) {
   do.call(cbind, cvrList)
 }
 
+# this gives the matrix of coverage
 z <- intCovMatrix(bmv)
