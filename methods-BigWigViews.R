@@ -65,20 +65,12 @@ setMethod(names, "BigWigViews", function(x) {
                       elementMetadata=bigWigSamples(bigWigViews)))
   }
 
-# TODO check on this split() copied over from the BamViews code
-.BigWigViews_which <- function(file)
-{
-  grange <- bigWigRanges(file)
-  which <- split(ranges(grange), seqnames(grange))
-  which
-}
-
 setMethod(coverage, "BigWigViews",
           function(x, ...)
           {
-            which <- .BigWigViews_which(x)
             fun <- function(i, BigWigViews, ..., verbose) {
-              bigWigGRanges <- import(BigWigFile(bigWigPaths(BigWigViews)[i]), which=which)
+              bigWigGRanges <- import(BigWigFile(bigWigPaths(BigWigViews)[i]), 
+                                      which=bigWigRanges(BigWigViews))
               cvr <- coverage(bigWigGRanges, weight=mcols(bigWigGRanges)$score, ...)
             }
             .BigWigViews_delegate("coverage", x, fun, ...)
