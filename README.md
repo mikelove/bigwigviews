@@ -26,5 +26,7 @@ An example function for getting an integer matrix is intCoverageMatrix() in exam
 
 - BigWigFile instead of character vector for specifying bigWigPaths. BigWigFile has methods seqinfo() and summary() which make use of the information contained in the BigWig. E.g. then you can warn about conflicts between bigWigRanges and the BigWig files.
 
+- Having a standard name for scaling factors in the bigWigSamples DataFrame.
+
 - What about the BigWigSelection argument to import.bw
 
