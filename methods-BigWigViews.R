@@ -135,9 +135,10 @@ setMethod(coverage, "BigWigViews",
           function(x, ...)
           {
             fun <- function(i, BigWigViews, ..., verbose) {
-              bigWigGRanges <- import(BigWigFile(bigWigPaths(BigWigViews)[i]), 
+              coverageGRanges <- import(BigWigFile(bigWigPaths(BigWigViews)[i]), 
                                       which=bigWigRanges(BigWigViews))
-              cvr <- coverage(bigWigGRanges, weight=mcols(bigWigGRanges)$score, ...)
+              # give back the Rle instead of the GRanges
+              coverage(coverageGRanges, weight=mcols(coverageGRanges)$score, ...)
             }
             .BigWigViews_delegate("coverage", x, fun, ...)
           })
