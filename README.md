@@ -30,3 +30,5 @@ An example function for getting an integer matrix is intCoverageMatrix() in exam
 
 - What about the BigWigSelection argument to import.bw
 
+- coverage on a BigWigViews with a single range gives the RleList of all seqnames. Maybe it should subset to just the coverage over the single range of interest?
+

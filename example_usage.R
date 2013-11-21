@@ -1,7 +1,9 @@
 # some Encode RNA-Seq BigWigs each 160 Mb
 ftpPath <- "ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeCshlLongRnaSeq/"
 ftpFiles <- c("wgEncodeCshlLongRnaSeqA549CellLongnonpolyaMinusRawSigRep1.bigWig",
-              "wgEncodeCshlLongRnaSeqA549CellLongnonpolyaMinusRawSigRep2.bigWig")
+              "wgEncodeCshlLongRnaSeqA549CellLongnonpolyaMinusRawSigRep2.bigWig",
+              "wgEncodeCshlLongRnaSeqA549CellLongnonpolyaPlusRawSigRep1.bigWig",
+              "wgEncodeCshlLongRnaSeqA549CellLongnonpolyaPlusRawSigRep1.bigWig")
 
 # download if they don't exist
 for (f in ftpFiles[!file.exists(ftpFiles)]) download.file(paste0(ftpPath,f),destfile=f)
@@ -12,7 +14,7 @@ source("AllClasses.R")
 source("AllGenerics.R")
 source("methods-BigWigViews.R")
 
-# just make a SimpleList of coverage
+# construct a BigWigViews instance
 gr <- GRanges(c("chr1","chr1","chr2"),IRanges(c(43e6,147e6,74e6)+1,width=2e5))
 bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
 
@@ -30,6 +32,49 @@ bwv[1:2,2]
 # with elements: RleList of coverage over each seq
 z <- coverage(bwv)
 print(object.size(z),unit="Mb")
+
+# get Rle coverage for a single range:
+coverageSingleRange <- function(BigWigViews, i) {
+  idx <- structure(seq_len(ncol(BigWigViews)), names=names(BigWigViews))
+  bwr <- bigWigRanges(BigWigViews[i,])
+  lapply(idx, function(j) {
+    cvr <- coverage(BigWigViews[i,])[[j]][[as.character(seqnames(bwr))]]
+    Views(cvr, ranges(bwr))[[1]]
+  })
+}
+
+z <- coverageSingleRange(bwv,1)
+print(object.size(z),unit="Mb")
+
+# some ridiculous functions
+rowSumsListRles <- function(l) {
+  Reduce("+",l)
+}
+rowMeansListRles <- function(l) {
+  Reduce("+",l) / length(l)
+}
+
+# hackety hackety t-test
+rleTTest <- function(rles, idx1, idx2, s0=1) {
+  n1 <- length(idx1)
+  n2 <- length(idx2)
+  mean1 <- rowMeansListRles(rles[idx1])
+  mean2 <- rowMeansListRles(rles[idx2])
+  sse1 <- rowSumsListRles(lapply(rles[idx1], function(x) (x - mean1)^2))  
+  sse2 <- rowSumsListRles(lapply(rles[idx2], function(x) (x - mean2)^2))
+  s <- sqrt( ( sse1 + sse2 ) / (n1 + n2 - 2) )
+  t <- (mean1 - mean2) / (s * sqrt( 1/n1 + 1/n2 ) + s0)
+  t
+}
+
+# stream along the genomic ranges and calculate t tests
+# this should also go and grab the scaling factor from the bigWigSamples DataFrame
+ts <- lapply(seq_len(nrow(bwv)), function(i) {
+  cvr <- coverageSingleRange(bwv,i)
+  t <- rleTTest(cvr, 1:2, 3:4)
+  t
+})
+
 
 # get integer coverage over the GRanges specified by BigWigViews
 intCoverageMatrix <- function(bwv) {
