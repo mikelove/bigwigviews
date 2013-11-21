@@ -63,7 +63,7 @@ rleTTest <- function(rles, idx1, idx2, s0=1) {
   sse1 <- rowSumsListRles(lapply(rles[idx1], function(x) (x - mean1)^2))  
   sse2 <- rowSumsListRles(lapply(rles[idx2], function(x) (x - mean2)^2))
   s <- sqrt( ( sse1 + sse2 ) / (n1 + n2 - 2) )
-  t <- (mean1 - mean2) / (s * sqrt( 1/n1 + 1/n2 ) + s0)
+  t <- (mean1 - mean2) / ((s + s0) * sqrt( 1/n1 + 1/n2 ))
   t
 }
 
