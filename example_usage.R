@@ -96,6 +96,11 @@ intCoverageMatrix <- function(bwv) {
   do.call(cbind, cvrList)
 }
 
+# subset as we are going making a dense matrix
+gr <- tileGenome(c("chr1"=249e6),cut.last.tile.in.chrom=TRUE,tilewidth=1e5)
+bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
+bwv <- bwv[101:110,]
+
 # this gives the matrix of coverage
 z <- intCoverageMatrix(bwv)
 print(object.size(z),unit="Mb")
