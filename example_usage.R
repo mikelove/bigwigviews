@@ -15,7 +15,7 @@ source("AllGenerics.R")
 source("methods-BigWigViews.R")
 
 # construct a BigWigViews instance
-gr <- GRanges(c("chr1","chr1","chr2"),IRanges(c(43e6,147e6,74e6)+1,width=2e5))
+gr <- tileGenome(c("chr1"=249e6),cut.last.tile.in.chrom=TRUE,tilewidth=5e6)
 bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
 
 # show
@@ -34,11 +34,14 @@ z <- coverage(bwv)
 print(object.size(z),unit="Mb")
 
 # get Rle coverage for a single range:
-coverageSingleRange <- function(BigWigViews, i) {
-  idx <- structure(seq_len(ncol(BigWigViews)), names=names(BigWigViews))
-  bwr <- bigWigRanges(BigWigViews[i,])
+coverageSingleRange <- function(bigWigViews, i) {
+  idx <- structure(seq_len(ncol(bigWigViews)), names=names(bigWigViews))
+  bwr <- bigWigRanges(bigWigViews[i,])
   lapply(idx, function(j) {
-    cvr <- coverage(BigWigViews[i,])[[j]][[as.character(seqnames(bwr))]]
+    cvr <- coverage(bigWigViews[i,])[[j]][[as.character(seqnames(bwr))]]
+    if (end(ranges(bwr)) > length(cvr)) {
+      stop("ranges in BigWigViews possibly extend beyond the end defined in the BigWig")
+    }
     Views(cvr, ranges(bwr))[[1]]
   })
 }
@@ -69,11 +72,11 @@ rleTTest <- function(rles, idx1, idx2, s0=1) {
 
 # stream along the genomic ranges and calculate t tests
 # this should also go and grab the scaling factor from the bigWigSamples DataFrame
-ts <- lapply(seq_len(nrow(bwv)), function(i) {
+system.time({ts <- lapply(seq_len(nrow(bwv)), function(i) {
   cvr <- coverageSingleRange(bwv,i)
   t <- rleTTest(cvr, 1:2, 3:4)
   t
-})
+})})
 
 
 # get integer coverage over the GRanges specified by BigWigViews
