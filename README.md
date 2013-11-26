@@ -22,13 +22,14 @@ An example function for getting an integer matrix is intCoverageMatrix() in exam
 
 # Design questions
 
-- The current implementation of BamViews parallelizes over samples using .BamViews_delegate. But we might think about parallelization over ranges instead? I have used lapply() in .BigWigViews_delegate() rather than ShortRead::srapply. Or do we want to parallelize over both?
+- BamViews offers parallelization over samples using srapply() in .BamViews_delegate(). We are focusing with BigWigViews on chunking over ranges instead. But we have to worry about I/O. Are we assuming users put bigwigs in scratch?
 
-- BigWigFile instead of character vector for specifying bigWigPaths. BigWigFile has methods seqinfo() and summary() which make use of the information contained in the BigWig. E.g. then you can warn about conflicts between bigWigRanges and the BigWig files.
+- coverage on a BigWigViews with a single range currently gives the RleList of all seqnames. should it subset to just the coverage over the single range of interest?
 
-- Having a standard name for scaling factors in the bigWigSamples DataFrame.
+- a standard place for scaling factors: another slot, or a column name in the bigWigSamples DataFrame
 
-- What about the BigWigSelection argument to import.bw
+- allow BigWigFile to specify bigWigPaths. BigWigFile has methods seqinfo() and summary() which make use of the information contained in the BigWig. E.g. then you can warn about conflicts between bigWigRanges and the BigWig files.
 
-- coverage on a BigWigViews with a single range gives the RleList of all seqnames. Maybe it should subset to just the coverage over the single range of interest?
+- use BigWigSelection argument to import.bw
+
 
