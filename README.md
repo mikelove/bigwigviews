@@ -3,6 +3,8 @@ BigWigViews
 
 R version of desired BigWigViews functionality
 
+Note: being developed with Bioconductor version 2.14
+
 The BigWig paper is here:
 
 http://bioinformatics.oxfordjournals.org/content/26/17/2204.long
