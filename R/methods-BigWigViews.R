@@ -21,9 +21,6 @@ setMethod(BigWigViews, c(bigWigRanges="RangedData"),
                 bigWigExperiment=bigWigExperiment)
           })
 
-# the bigWigRanges = "missing" method doesn't make as much 
-# sense because I don't know the analogy of the header of a BigWig
-
 setMethod(.validity, "BigWigViews", function(object) {
   msg <- NULL
   if (length(bigWigPaths(object)) != nrow(bigWigSamples(object)))
@@ -32,9 +29,11 @@ setMethod(.validity, "BigWigViews", function(object) {
   if (is.null(msg)) TRUE else msg
 })
 
+#' @export
 bigWigPaths <-
   function(x) setNames(slot(x, "bigWigPaths"), names(x))
 
+#' @export
 `bigWigDirname<-` <-
   function(x, ..., value)
   {
@@ -42,18 +41,23 @@ bigWigPaths <-
                bigWigPaths=file.path(value, basename(bigWigPaths(x))))
   }
 
+#' @export
 bigWigSamples <-
   function(x) slot(x, "bigWigSamples")
 
+#' @export
 `bigWigSamples<-` <-
   function(x, value) initialize(x, bigWigSamples=value)
 
+#' @export
 bigWigRanges <-
   function(x) slot(x, "bigWigRanges")
 
+#' @export
 `bigWigRanges<-` <-
   function(x, value) initialize(x, bigWigRanges=value)
 
+#' @export
 bigWigExperiment <-
   function(x) slot(x, "bigWigExperiment")
 
@@ -142,7 +146,6 @@ setMethod(coverage, "BigWigViews",
             .BigWigViews_delegate("coverage", x, fun, ...)
           })
 
-## show
 setMethod(show, "BigWigViews", function(object) {
   cat(class(object), "dim:",
       paste(dim(object), c("ranges", "samples"), collapse=" x "),

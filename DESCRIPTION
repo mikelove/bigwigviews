@@ -5,3 +5,14 @@ Version: 0.1
 Author: Mike Love <michaelisaiahlove@gmail.com>
 Maintainer: Mike Love <michaelisaiahlove@gmail.com>
 License: Artistic-2.0
+Depends:
+    IRanges,
+    Rsamtools,
+    rtracklayer
+Suggests:
+    testthat
+Collate:
+    'AllClasses.R'
+    'AllGenerics.R'
+    'methods-BigWigViews.R'
+    'other.R'

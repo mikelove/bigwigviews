@@ -1,4 +1,8 @@
-# get Rle coverage for a single range:
+#' Coverage for a single range
+#' 
+#' Get Rle coverage for a single range
+#'
+#' @export
 coverageSingleRange <- function(bigWigViews, i) {
   idx <- structure(seq_len(ncol(bigWigViews)), names=names(bigWigViews))
   bwr <- bigWigRanges(bigWigViews[i,])
@@ -11,15 +15,23 @@ coverageSingleRange <- function(bigWigViews, i) {
   })
 }
 
-# some ridiculous functions
+#' Rle row sums
+#'
+#' @export
 rowSumsListRles <- function(l) {
   Reduce("+",l)
 }
+
+#' Rle row means
+#'
+#' @export
 rowMeansListRles <- function(l) {
   Reduce("+",l) / length(l)
 }
 
-# hackety hackety t-test
+#' Rle t-test
+#'
+#' @export
 rleTTest <- function(rles, idx1, idx2, s0=1) {
   n1 <- length(idx1)
   n2 <- length(idx2)
@@ -32,13 +44,17 @@ rleTTest <- function(rles, idx1, idx2, s0=1) {
   t
 }
 
-# get integer coverage over the GRanges specified by BigWigViews
+#' Integer coverage matrix
+#' 
+#' Get integer coverage over the GRanges specified by BigWigViews
+#' 
+#' @export
 intCoverageMatrix <- function(bwv) {
   # get the SimpleList of RleLists
   cvrOverBigWigs <- coverage(bwv)
   bwr <- bigWigRanges(bwv)
   charRangesNames <- as.character(seqnames(bwr))
-  rangesList <- split(ranges(bwr),seqnames(bwr))
+  rangesList <- split(ranges(bwr),charRangesNames)
   cvrList <- lapply(cvrOverBigWigs, function(cvr) {
     listOfLists <- viewApply(RleViewsList(rleList=cvr[names(cvr) %in% charRangesNames],
                                           rangesList=rangesList), as.integer, simplify=FALSE)
