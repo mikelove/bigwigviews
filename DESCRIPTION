@@ -1,0 +1,7 @@
+Package: bigwigviews
+Title: bigwigviews
+Description: Rough implementation of desired BigWigViews class
+Version: 0.1
+Author: Mike Love <michaelisaiahlove@gmail.com>
+Maintainer: Mike Love <michaelisaiahlove@gmail.com>
+License: Artistic-2.0
