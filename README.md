@@ -40,4 +40,4 @@ An example function for getting an integer matrix is intCoverageMatrix() in exam
 
 - use BigWigSelection argument to import.bw
 
-
+- check the seqlevels!!!
