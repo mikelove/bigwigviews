@@ -8,7 +8,7 @@ License: Artistic-2.0
 Depends:
     IRanges,
     Rsamtools,
-    rtracklayer
+    rtracklayer (>= 1.23.0)
 Suggests:
     testthat
 Collate:

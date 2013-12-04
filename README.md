@@ -3,7 +3,13 @@ BigWigViews
 
 R version of desired BigWigViews functionality
 
-Note: being developed with Bioconductor version 2.14
+**Note**: being developed with Bioconductor version 2.14
+
+In order to build without testing, comment out this line in tests/test-all.R:
+
+```R
+    test_check("bigwigviews")
+```
 
 The BigWig paper is here:
 
