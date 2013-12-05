@@ -11,9 +11,8 @@ test_that("the code runs on Encode BigWigs", {
   fls <- paste0(localPath, "/", ftpFiles)
 
   # construct a BigWigViews instance
-  gr <- tileGenome(c("chr1"=249e6),cut.last.tile.in.chrom=TRUE,tilewidth=5e6)
-  gr <- gr[1:10]
-  bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr[1:10])
+  gr <- GRanges("chr1",IRanges(11:20 * 1e6 + 1,width=1e4))
+  bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
 
   # show
   bwv

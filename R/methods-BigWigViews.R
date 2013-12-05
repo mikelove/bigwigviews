@@ -146,6 +146,24 @@ setMethod(coverage, "BigWigViews",
             .BigWigViews_delegate("coverage", x, fun, ...)
           })
 
+# TODO: this is just testing code, take the first range only
+setMethod(summary, "BigWigViews",
+          function(object, ...)
+          {
+            fun <- function(i, bigWigViews, ..., verbose) {
+              z <- try(summary(BigWigFile(bigWigPaths(bigWigViews)[i]), 
+                               bigWigRanges(bigWigViews), ...),
+                       silent=TRUE)
+              if (inherits(z,"try-error")) {
+                return(0) 
+              } else {
+                # TODO: this is just testing code, take the first range only
+                return(as.numeric(z[[1]]))
+              }
+            }
+            .BigWigViews_delegate("summary", object, fun, ...)
+          })
+
 setMethod(show, "BigWigViews", function(object) {
   cat(class(object), "dim:",
       paste(dim(object), c("ranges", "samples"), collapse=" x "),
