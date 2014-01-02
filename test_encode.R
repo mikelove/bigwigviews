@@ -42,7 +42,8 @@ unlist(z)
 gr <- GRanges("chr1",IRanges(11007000 + 0:2 * 100,width=100))
 bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr, byFile=FALSE)
 z <- coverage(bwv)
-z <- summary(bwv)
+z <- summary(bwv,type="mean")
+z <- summary(bwv,type="sd")
 
 
 #############################
