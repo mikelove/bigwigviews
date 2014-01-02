@@ -44,6 +44,13 @@ bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr, byFile=FALSE)
 z <- coverage(bwv)
 z <- summary(bwv)
 
+
+#############################
+#
+# pre-GenomicFileViews code:
+#
+##############################
+ 
 # stream along the genomic ranges and calculate t tests
 # this should also go and grab the scaling factor from the bigWigSamples DataFrame
 t <- system.time({ts <- lapply(seq_len(nrow(bwv)), function(i) {
