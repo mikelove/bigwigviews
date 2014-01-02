@@ -3,30 +3,11 @@ BigWigViews
 
 R version of desired BigWigViews functionality
 
-**Note**: being developed with Bioconductor version 2.14
-
-In order to build without testing, comment out this line in tests/test-all.R:
-
-```R
-    test_check("bigwigviews")
-```
+**Note**: now being merged with https://github.com/Bioconductor/GenomicFileViews
 
 The BigWig paper is here:
 
 http://bioinformatics.oxfordjournals.org/content/26/17/2204.long
-
-I just grabbed the necessary classes, generics and methods from Rsamtools::BamViews, removing the bamIndices slot, because sample and index are combined in BigWig files.
-
-Two novel bits of code:
-
-- the coverage method for BigWigViews, added to methods-BigWigViews.R
-- which *apply function to use in .BigWigViews_delegate(). Currently I use lapply:
-
-```R
-    result <- lapply(idx, fun, bigWigViews, ...)
-```
-
-An example function for getting an integer matrix is intCoverageMatrix() in example_usage.R
 
 # Design questions
 
