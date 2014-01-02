@@ -1,4 +1,3 @@
-
 # some Encode RNA-Seq BigWigs each 160 Mb
 ftpPath <- "ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeCshlLongRnaSeq/"
 ftpFiles <- c("wgEncodeCshlLongRnaSeqA549CellLongnonpolyaMinusRawSigRep1.bigWig",
@@ -6,10 +5,11 @@ ftpFiles <- c("wgEncodeCshlLongRnaSeqA549CellLongnonpolyaMinusRawSigRep1.bigWig"
               "wgEncodeCshlLongRnaSeqA549CellLongnonpolyaPlusRawSigRep1.bigWig",
               "wgEncodeCshlLongRnaSeqA549CellLongnonpolyaPlusRawSigRep2.bigWig")
 
-localPath <- system.file("testData", package="bigwigviews")
+localPath <- "/Users/michael/scripts/bigwigviews/testData"
 library(rtracklayer)
 fls <- paste0(localPath, "/", ftpFiles)
 
+library(GenomicFileViews)
 # construct a BigWigViews instance
 gr <- GRanges("chr1",IRanges(11:20 * 1e6 + 1,width=1e4))
 bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
@@ -29,8 +29,20 @@ bwv[1:2,2]
 z <- coverage(bwv)
 print(object.size(z),unit="Mb")
 
-z <- coverageSingleRange(bwv,1)
-print(object.size(z),unit="Mb")
+# summary method
+gr <- GRanges("chr1",IRanges(11007000 + 0:1 * 100,width=100))
+bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
+z <- summary(bwv)
+unlist(z)
+gr <- GRanges("chr1",IRanges(11007000 + 0:2 * 100,width=100))
+bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
+z <- summary(bwv)
+unlist(z)
+
+gr <- GRanges("chr1",IRanges(11007000 + 0:2 * 100,width=100))
+bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr, byFile=FALSE)
+z <- coverage(bwv)
+z <- summary(bwv)
 
 # stream along the genomic ranges and calculate t tests
 # this should also go and grab the scaling factor from the bigWigSamples DataFrame
