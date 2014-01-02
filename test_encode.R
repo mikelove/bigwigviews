@@ -10,40 +10,40 @@ library(rtracklayer)
 fls <- paste0(localPath, "/", ftpFiles)
 
 library(GenomicFileViews)
-# construct a BigWigViews instance
+# construct a BigWigFileViews instance
 gr <- GRanges("chr1",IRanges(11:20 * 1e6 + 1,width=1e4))
-bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
+bwfv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
 
-# show
-bwv
+# basic methods
+bwfv
+names(bwfv)
+dim(bwfv)
+dimnames(bwfv)
+bwfv[1:2,2]
 
-# the carry-over methods from BamViews
-names(bwv)
-dim(bwv)
-dimnames(bwv)
-bwv[1:2,2]
-
-# try the coverage method
-# this gives a SimpleList for each sample
-# with elements: RleList of coverage over each seq
-z <- coverage(bwv)
-print(object.size(z),unit="Mb")
+# coverage method
+z <- coverage(bwfv)
 
 # summary method
+# works
 gr <- GRanges("chr1",IRanges(11007000 + 0:1 * 100,width=100))
-bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
-z <- summary(bwv)
-unlist(z)
-gr <- GRanges("chr1",IRanges(11007000 + 0:2 * 100,width=100))
-bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
-z <- summary(bwv)
+bwfv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
+z <- summary(bwfv)
 unlist(z)
 
+# catches error, returns zero
 gr <- GRanges("chr1",IRanges(11007000 + 0:2 * 100,width=100))
-bwv <- BigWigFileViews(filePaths=fls, fileRanges=gr, byFile=FALSE)
-z <- coverage(bwv)
-z <- summary(bwv,type="mean")
-z <- summary(bwv,type="sd")
+bwfv <- BigWigFileViews(filePaths=fls, fileRanges=gr)
+z <- summary(bwfv)
+unlist(z)
+
+# works, because we are going one range at a time
+gr <- GRanges("chr1",IRanges(11007000 + 0:2 * 100,width=100))
+bwfv <- BigWigFileViews(filePaths=fls, fileRanges=gr, byFile=FALSE)
+z <- coverage(bwfv)
+z <- summary(bwfv,type="mean")
+z <- summary(bwfv,type="sd")
+
 
 
 #############################
@@ -54,8 +54,8 @@ z <- summary(bwv,type="sd")
  
 # stream along the genomic ranges and calculate t tests
 # this should also go and grab the scaling factor from the bigWigSamples DataFrame
-t <- system.time({ts <- lapply(seq_len(nrow(bwv)), function(i) {
-  cvr <- coverageSingleRange(bwv,i)
+t <- system.time({ts <- lapply(seq_len(nrow(bwfv)), function(i) {
+  cvr <- coverageSingleRange(bwfv,i)
   t <- rleTTest(cvr, 1:2, 3:4)
   t
 })})
@@ -64,11 +64,11 @@ print(t)
 
 # subset as we are going making a dense matrix
 gr <- tileGenome(c("chr1"=249e6),cut.last.tile.in.chrom=TRUE,tilewidth=1e5)
-bwv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
-bwv <- bwv[101:110,]
+bwfv <- BigWigViews(bigWigPaths=fls, bigWigRanges=gr)
+bwfv <- bwfv[101:110,]
 
 # this gives the matrix of coverage
-z <- intCoverageMatrix(bwv)
+z <- intCoverageMatrix(bwfv)
 print(object.size(z),unit="Mb")
 
 # plot coverage across replicates
