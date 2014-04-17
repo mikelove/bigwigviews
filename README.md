@@ -1,9 +1,8 @@
-BigWigViews
-===========
+**Note**: this functionality is part of Bioconductor package `GenomicFiles` as of April 2014
 
-R version of desired BigWigViews functionality
+Code is hosted at https://github.com/Bioconductor/GenomicFileViews
 
-**Note**: now being merged with https://github.com/Bioconductor/GenomicFileViews
+---
 
 The BigWig paper is here:
 
